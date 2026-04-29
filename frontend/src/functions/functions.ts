@@ -5,15 +5,15 @@ const axiosInstance = axios.create({
 })
 
 export async function init() {
-    const stream = await navigator.mediaDevices.getUserMedia({
+    const localStream = await navigator.mediaDevices.getUserMedia({
         video: {
             width: { min: 640, ideal: 1920, max: 1920 },
             height: { min: 480, ideal: 1080, max: 1080 }
         }
     })
     const peer = createPeer();
-    stream.getTracks().forEach(track => peer.addTrack(track, stream));
-    return { peer, stream };
+    localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
+    return { peer, localStream };
 }
 
 function createPeer(): RTCPeerConnection {
