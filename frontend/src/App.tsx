@@ -1,18 +1,20 @@
 import { ThemeProvider } from '@/theme-provider';
-import Toolbar from '@/components/toolbar';
-import VideoInterface from './components/videointerface';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { routeTree } from './routeTree.gen';
+
+const router = createRouter({ routeTree })
+
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
 
 function App() {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <div className='flex flex-col h-screen'>
-        <Toolbar />
-        <VideoInterface />
-        <div className='h-18 border-t'>
-          controls
-        </div>
-      </div>
+      <RouterProvider router={router} />
     </ThemeProvider>
   )
 }

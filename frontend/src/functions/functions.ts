@@ -11,8 +11,13 @@ export async function init() {
             height: { min: 480, ideal: 1080, max: 1080 }
         }
     })
+    const streams: MediaStream[] = new Array(localStream);
     const peer = createPeer();
     localStream.getTracks().forEach(track => peer.addTrack(track, localStream));
+
+    peer.ontrack = (e) => {
+        e.streams.forEach((stream) => streams.push(stream));
+    }
     return { peer, localStream };
 }
 
@@ -34,7 +39,7 @@ async function handleNegotitationNeededEvent(peer: RTCPeerConnection) {
     await peer.setLocalDescription(offer);
     console.log("local description set");
     try {
-        const { data } = await axiosInstance.post("/createRoom/123", peer.localDescription);
+        const { data } = await axiosInstance.post("/createRoom", peer.localDescription);
         const remoteDescription = new RTCSessionDescription(data.sdp);
         peer.setRemoteDescription(remoteDescription);
         console.log("remote description set");
