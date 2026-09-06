@@ -15,18 +15,17 @@ function HomeComponent() {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [micOn, setMicOn] = useState(true);
   const [cameraOn, setCameraOn] = useState(true);
-  const [cameraConstraint, setCameraConstraint] = useState<MediaStreamConstraints>({
-    video: {
-      width: { min: 640, ideal: 1920, max: 1920 },
-      height: { min: 480, ideal: 1080, max: 1080 },
-    },
-    audio: true
-  });
 
   useEffect(() => {
     (async () => {
       try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia(cameraConstraint);
+        const mediaStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { min: 640, ideal: 1920, max: 1920 },
+            height: { min: 480, ideal: 1080, max: 1080 },
+          },
+          audio: true
+        });
         setStream(mediaStream);
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
@@ -37,38 +36,28 @@ function HomeComponent() {
         }
       }
     })();
-  }, [cameraConstraint]);
+  }, []);
 
-  useEffect(() => {
-    console.log(cameraConstraint)
-  }, [cameraConstraint])
 
   const toggleMic = () => {
     if (stream) {
-      cameraConstraint.audio !== false ? setCameraConstraint((prev) => ({
-        ...prev, audio: false
-      })) : setCameraConstraint((prev) => ({
-        ...prev, audio: true
-      }));
+      stream.getAudioTracks().forEach(track => {
+        track.enabled = !track.enabled;
+      });
       setMicOn(!micOn);
     }
   };
 
   const toggleCamera = () => {
     if (stream) {
-      cameraConstraint.video !== false ? setCameraConstraint((prev) => ({
-        ...prev, video: false
-      })) : setCameraConstraint((prev) => ({
-        ...prev, video: {
-          width: { min: 640, ideal: 1920, max: 1920 },
-          height: { min: 480, ideal: 1080, max: 1080 },
-        }
-      }));
+      stream.getVideoTracks().forEach(track => {
+        track.enabled = !track.enabled;
+      });
       setCameraOn(!cameraOn);
     }
   };
 
-  const { roomId } = Route.useParams()
+  const { roomId } = Route.useParams();
 
   return (
     <div className='flex self-center h-screen items-center w-8/12'>
