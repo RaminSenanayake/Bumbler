@@ -9,9 +9,6 @@ function Room() {
     return (
         <>
             <VideoInterface />
-            <div className='h-18 border-t'>
-                controls
-            </div>
         </>
     )
 }

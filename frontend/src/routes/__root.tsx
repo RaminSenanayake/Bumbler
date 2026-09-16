@@ -13,7 +13,7 @@ function RootComponent() {
   })
 
   return (
-    <div className='flex flex-col max-h-screen'>
+    <div className='flex flex-col h-screen max-h-screen'>
       {!isNotFound && <Toolbar />}
       <Outlet />
     </div>
